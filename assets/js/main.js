@@ -156,7 +156,94 @@
   }
 
   /* ---------------------------------------------------------
-     4. Reveal on scroll
+     4. Section film plates
+
+        Services / Process / Work / Contact each sit on a dimmed
+        video. These are decoration, so they cost nothing until
+        they are nearly on screen: the <video> is created only
+        when the section approaches the viewport, and paused
+        again once it leaves. Under reduced motion none of them
+        are ever created.
+  --------------------------------------------------------- */
+  var films = $$('[data-film]');
+
+  // Four section clips is another ~7.5 MB on top of the hero. Decoration is
+  // not worth that to someone who has asked to save data — they get the scrim
+  // alone, which is what the sections looked like before the film.
+  //
+  // Deliberately NOT gated on effectiveType '3g': that value is inferred from
+  // observed latency, and an ordinary connection with a slow round trip reports
+  // 3g routinely — including a local dev server. Gating on it silently strips
+  // the film from people who could load it fine. Only saveData (an explicit
+  // choice) and the genuinely unusable 2g tiers opt out.
+  var conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  var thrifty = !!conn && (conn.saveData === true || /^(slow-)?2g$/.test(conn.effectiveType || ''));
+
+  if (films.length && 'IntersectionObserver' in window && !reduced && !thrifty) {
+    var onScreen = new WeakMap();
+
+    var build = function (section) {
+      var mount = $('.film', section);
+      if (!mount || mount.querySelector('video')) return;
+
+      var video = document.createElement('video');
+      video.muted = true;
+      video.loop = true;
+      video.playsInline = true;
+      video.setAttribute('playsinline', '');
+      video.preload = 'auto';
+      video.src = section.getAttribute('data-film');
+
+      video.addEventListener('playing', function () { video.classList.add('is-live'); });
+      // A missing file just leaves the section as it was.
+      video.addEventListener('error', function () { video.remove(); });
+
+      mount.insertBefore(video, mount.firstChild);
+    };
+
+    // Loading and visibility are tracked separately and can settle in either
+    // order, so both funnel through here rather than acting directly. A clip
+    // built while its section is still off screen must not start playing, and
+    // one whose section was already on screen when it finished building will
+    // never get another intersection event to start it.
+    var sync = function (section) {
+      var video = $('.film video', section);
+      if (!video) return;
+
+      if (onScreen.get(section)) {
+        var p = video.play();
+        if (p && typeof p.catch === 'function') { p.catch(function () {}); }
+      } else {
+        video.pause();
+      }
+    };
+
+    // Wide margin: start fetching well before the section is reached.
+    var loader = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        build(entry.target);
+        sync(entry.target);
+        loader.unobserve(entry.target);
+      });
+    }, { rootMargin: '60% 0px' });
+
+    // Narrow margin: only actually run a clip while it is on screen.
+    var player = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        onScreen.set(entry.target, entry.isIntersecting);
+        sync(entry.target);
+      });
+    }, { rootMargin: '10% 0px' });
+
+    films.forEach(function (section) {
+      loader.observe(section);
+      player.observe(section);
+    });
+  }
+
+  /* ---------------------------------------------------------
+     5. Reveal on scroll
   --------------------------------------------------------- */
   var revealables = $$('.reveal');
 
@@ -176,7 +263,7 @@
   }
 
   /* ---------------------------------------------------------
-     5. Stat count-up
+     6. Stat count-up
   --------------------------------------------------------- */
   var stats = $$('.stat b[data-count]').filter(function (el) {
     return parseFloat(el.getAttribute('data-count')) > 0;
@@ -211,7 +298,7 @@
   }
 
   /* ---------------------------------------------------------
-     6. Contact form
+     7. Contact form
         Validates client-side, then hands the message to the
         visitor's mail app. Nothing is transmitted anywhere
         else. See README for wiring up a real backend.
@@ -298,7 +385,7 @@
   });
 
   /* ---------------------------------------------------------
-     7. Footer year
+     8. Footer year
   --------------------------------------------------------- */
   $('#yr').textContent = new Date().getFullYear();
 })();

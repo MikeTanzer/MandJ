@@ -248,6 +248,65 @@ ul,ol{ margin:0; padding:0; list-style:none; }
    ============================================================ */
 .section{ padding-block:clamp(74px,10vw,132px); }
 .section--alt{ background:var(--ink-2); }
+
+/* ---------- section film plates ----------
+   A darkened video sits behind the content of Services, Process, Work and
+   Contact. It is decoration, not information: heavily dimmed and scrimmed so
+   body copy keeps its contrast, and never loaded at all under
+   prefers-reduced-motion. main.js injects the <video> only as the section
+   nears the viewport — see the lazy loader there. */
+.section--film{ position:relative; isolation:isolate; overflow:hidden; }
+.section--film > .wrap{ position:relative; z-index:1; }
+
+.film{ position:absolute; inset:0; z-index:0; pointer-events:none; }
+.film video{
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:cover; opacity:0; transition:opacity 1.4s var(--ease);
+  filter:grayscale(.15) contrast(1.04);
+}
+.film video.is-live{ opacity:.6; }
+.section--alt .film video.is-live{ opacity:.5; }
+
+/* Keeps text legible over whatever the footage happens to be doing:
+   solid at the edges, thinnest in the middle where the copy sits. */
+.film__scrim{
+  position:absolute; inset:0; z-index:1;
+  background:
+    linear-gradient(180deg, var(--ink) 0%, rgba(11,12,14,.28) 18%, rgba(11,12,14,.28) 82%, var(--ink) 100%),
+    linear-gradient(90deg, rgba(11,12,14,.7) 0%, rgba(11,12,14,.12) 58%, rgba(11,12,14,.5) 100%);
+}
+.section--alt .film__scrim{
+  background:
+    linear-gradient(180deg, var(--ink-2) 0%, rgba(18,20,24,.34) 18%, rgba(18,20,24,.34) 82%, var(--ink-2) 100%),
+    linear-gradient(90deg, rgba(18,20,24,.74) 0%, rgba(18,20,24,.16) 58%, rgba(18,20,24,.54) 100%);
+}
+
+/* The service card grid is opaque by design, so it would block the film
+   entirely. Let it read as glass instead. */
+.section--film .cards{ background:rgba(42,46,53,.55); border-color:rgba(42,46,53,.85); }
+.section--film .card{ background:rgba(11,12,14,.82); backdrop-filter:blur(7px); }
+.section--film .card:hover{ background:rgba(26,29,34,.9); }
+.section--film .contact__form{ background:rgba(11,12,14,.86); backdrop-filter:blur(9px); }
+.section--film .field input,
+.section--film .field select,
+.section--film .field textarea{ background:rgba(18,20,24,.9); }
+.section--film .field input:focus,
+.section--film .field select:focus,
+.section--film .field textarea:focus{ background:rgba(26,29,34,.95); }
+
+/* These sit straight on the footage rather than on a panel, so they carry a
+   shadow — a bright frame drifting past must not wash them out. */
+.section--film .section__head h2,
+.section--film .steps li h3,
+.section--film .contact h2,
+.section--film .proj__meta h3{ text-shadow:0 3px 22px rgba(0,0,0,.85); }
+.section--film .section__head .eyebrow,
+.section--film .steps li p,
+.section--film .lede,
+.section--film .info,
+.section--film .steps li b{ text-shadow:0 2px 14px rgba(0,0,0,.9); }
+.section--film .steps li{ border-top-color:rgba(244,241,236,.28); }
+.section--film .info li{ border-top-color:rgba(244,241,236,.22); }
 .section__head{ max-width:62ch; margin-bottom:clamp(40px,6vw,68px); }
 .section__head h2{
   font-family:var(--display); text-transform:uppercase;
@@ -451,9 +510,10 @@ ul,ol{ margin:0; padding:0; list-style:none; }
   html{ scroll-behavior:auto; }
   *,*::before,*::after{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; }
   .reveal{ opacity:1; transform:none; }
+  .film video{ display:none; }
 }
 
 @media print{
-  .nav,.hero__reel,.hero__scroll,.band{ display:none !important; }
+  .nav,.hero__reel,.hero__scroll,.film,.band{ display:none !important; }
   body{ background:#fff; color:#000; }
 }

@@ -7,7 +7,7 @@ index.html
 assets/
   css/styles.css
   js/main.js
-  video/          hero-1.mp4, hero-2.mp4, hero-3.mp4
+  video/          hero-1..3.mp4 + bg-services/process/work/contact.mp4
   img/            <- work-1..4.jpg go here
 ```
 
@@ -58,6 +58,41 @@ ffmpeg -i source.mov -t 6 -an -vf "scale=1920:-2,fps=30" -c:v libx264 -crf 26 -p
 
 Because the clips dissolve into each other rather than hard-cutting, they don't need to
 be individually loop-safe.
+
+## Section backgrounds
+
+Services, Process, Work and Contact each sit on their own dimmed, looping video:
+
+| Section | File | Shot |
+|---|---|---|
+| Services | `bg-services.mp4` | Grinder sparks off steel, slow motion |
+| Process  | `bg-process.mp4`  | Drift across drawings on a jobsite table |
+| Work     | `bg-work.mp4`     | Aerial over a finished building at blue hour |
+| Contact  | `bg-contact.mp4`  | Equipment yard at dawn |
+
+These are decoration, and they're treated as such:
+
+- Held at **24–30% opacity** under a two-axis scrim — solid at the edges, thinnest
+  through the middle where the copy sits — so body text keeps its contrast whatever the
+  footage is doing. Turn the dial in `.film video.is-live` in `styles.css`.
+- **Nothing loads until the section is near the viewport.** `main.js` creates each
+  `<video>` on an IntersectionObserver with a 60% margin, and a second observer pauses
+  the clip once it scrolls away. Landing on the page costs you the hero clip, nothing else.
+- **Never created at all** under `prefers-reduced-motion`, nor when the browser reports
+  Save-Data or a 2G connection — four clips is ~7.5 MB on top of the hero, and that
+  isn't worth it on a metered connection. Those visitors get the scrim alone, which is
+  what the sections looked like before the film existed.
+- A missing file removes itself and leaves the section exactly as it was — no gap,
+  no broken frame.
+
+Because the cards and the contact form would otherwise sit as opaque slabs on top of the
+film, `.section--film` gives them translucent backgrounds and a small blur.
+
+To change a section's clip, edit its `data-film` attribute on the `<section>` in
+`index.html`. To drop the video from a section entirely, remove `section--film`, its
+`data-film` attribute and its `<div class="film">`.
+
+Same encoding specs as the hero clips above.
 
 ## Project photos
 
