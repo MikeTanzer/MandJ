@@ -194,6 +194,20 @@
       video.preload = 'auto';
       video.src = section.getAttribute('data-film');
 
+      // Optional per-section pacing, e.g. data-film-rate="0.67" for a third
+      // slower. Browsers reset playbackRate on some load transitions, so it is
+      // re-applied rather than set once.
+      var rate = parseFloat(section.getAttribute('data-film-rate'));
+      if (rate > 0) {
+        var pace = function () { video.playbackRate = rate; };
+        pace();
+        video.addEventListener('loadedmetadata', pace);
+        video.addEventListener('play', pace);
+        video.addEventListener('ratechange', function () {
+          if (video.playbackRate !== rate) pace();
+        });
+      }
+
       video.addEventListener('playing', function () { video.classList.add('is-live'); });
       // A missing file just leaves the section as it was.
       video.addEventListener('error', function () { video.remove(); });

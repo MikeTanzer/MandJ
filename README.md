@@ -63,16 +63,21 @@ be individually loop-safe.
 
 Services, Process, Work and Contact each sit on their own dimmed, looping video:
 
-| Section | File | Shot |
-|---|---|---|
-| Services | `bg-services.mp4` | Grinder sparks off steel, slow motion |
-| Process  | `bg-process.mp4`  | Drift across drawings on a jobsite table |
-| Work     | `bg-work.mp4`     | Aerial over a finished building at blue hour |
-| Contact  | `bg-contact.mp4`  | Equipment yard at dawn |
+| Section | File | Speed | Shot |
+|---|---|---|---|
+| Services | `bg-services.mp4` | 1× | Grinder sparks off steel, slow motion |
+| Process  | `bg-process.mp4`  | 0.67× | Drift across drawings on a jobsite table |
+| Work     | `bg-work.mp4`     | 0.67× | Aerial over a finished building at blue hour |
+| Contact  | `bg-contact.mp4`  | 0.5× | Equipment yard at dawn |
 
 These are decoration, and they're treated as such:
 
-- Held at **24–30% opacity** under a two-axis scrim — solid at the edges, thinnest
+- Paced per section with `data-film-rate` on the `<section>` — `0.67` is a third slower,
+  `0.5` is half speed. Applied with `playbackRate` rather than re-encoded, so changing a
+  clip's speed is a one-attribute edit and costs no extra bytes. Browsers reset
+  `playbackRate` on some load transitions, so `main.js` re-applies it on
+  `loadedmetadata`, `play` and `ratechange`. Omit the attribute for full speed.
+- Held at **50–60% opacity** under a two-axis scrim — solid at the edges, thinnest
   through the middle where the copy sits — so body text keeps its contrast whatever the
   footage is doing. Turn the dial in `.film video.is-live` in `styles.css`.
 - **Nothing loads until the section is near the viewport.** `main.js` creates each
