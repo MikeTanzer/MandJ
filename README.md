@@ -8,7 +8,7 @@ assets/
   css/styles.css
   js/main.js
   video/          hero-1..3.mp4 + bg-services/process/work/contact.mp4
-  img/            <- work-1..4.jpg go here
+  img/            favicon + app icons; work-1..4.jpg go here
 ```
 
 ## The looping hero background
@@ -93,6 +93,26 @@ To change a section's clip, edit its `data-film` attribute on the `<section>` in
 `data-film` attribute and its `<div class="film">`.
 
 Same encoding specs as the hero clips above.
+
+## The favicon
+
+`assets/img/favicon.svg` is the nav logo mark — the amber tile with its top-right and
+bottom-left corners cut, carrying the mountain glyph. Its geometry mirrors `.brand__mark`
+in `styles.css`, so the tab icon and the header lockup stay the same shape.
+
+Linked from `index.html` as SVG first, with `favicon.ico` (16/32/48 px) behind it for
+older browsers and `apple-touch-icon.png` for iOS home screens. A copy of `favicon.ico`
+also sits at the project root for tools that probe `/favicon.ico` directly.
+
+If the logo changes, edit `favicon.svg` and re-render the rasters:
+
+```bash
+python3 tools/make-icons.py
+```
+
+The app icons are full-bleed — no corner cuts, since iOS applies its own mask — and their
+glyph is nudged up two units, because the mountain is bottom-heavy and reads low when it
+fills a large tile. The tab icon stays true to the header lockup.
 
 ## Project photos
 

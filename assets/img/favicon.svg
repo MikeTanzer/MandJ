@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="MNJ Construction">
+  <!-- The nav logo mark: amber tile with the top-right and bottom-left
+       corners cut, carrying the MNJ mountain glyph. Geometry matches
+       .brand__mark in assets/css/styles.css. -->
+  <path fill="#ffb020" d="M0 0 H51 L64 13 V64 H13 L0 51 Z"/>
+  <path fill="#0b0c0e" d="M11.52 44.8 L24.32 19.2 L32 34.56 L39.68 19.2 L52.48 44.8 Z"/>
+</svg>
