@@ -138,11 +138,22 @@ ul,ol{ margin:0; padding:0; list-style:none; }
   padding-block: 140px clamp(70px, 12vh, 130px);
   overflow:hidden; isolation:isolate;
 }
-.hero__video, .hero__fallback{
+.hero__reel, .hero__fallback{
   position:absolute; inset:0; width:100%; height:100%; z-index:-3;
 }
-.hero__video{ object-fit:cover; z-index:-2; opacity:0; transition:opacity 1.1s var(--ease); }
+.hero__reel{ z-index:-2; }
+/* Every clip is stacked; only the active one is opaque. The overlap of the
+   fade-out and fade-in is what makes the hand-off read as a crossfade. */
+.hero__video{
+  position:absolute; inset:0; width:100%; height:100%; z-index:1;
+  object-fit:cover; opacity:0; transition:opacity 1.1s var(--ease);
+}
 .hero__video.is-live{ opacity:1; }
+/* Hand-off: the incoming clip is parked underneath at full opacity with no
+   fade of its own, and the outgoing clip dissolves away on top of it. Fading
+   both at once would dip through to the dark background mid-transition. */
+.hero__video.is-under{ opacity:1; transition:none; }
+.hero__video.is-out{ z-index:2; }
 
 /* --- procedural fallback: desert sun, ridge, light beam, grain --- */
 .hero__fallback{ background:linear-gradient(180deg,#1a1206 0%,#0e0f12 55%,#0b0c0e 100%); }
@@ -217,13 +228,6 @@ ul,ol{ margin:0; padding:0; list-style:none; }
 }
 .hero__scroll span{ width:3px; height:8px; background:var(--amber); border-radius:2px; animation:scrollDot 1.7s ease-in-out infinite; }
 @keyframes scrollDot{ 0%,100%{ transform:translateY(0); opacity:1 } 60%{ transform:translateY(12px); opacity:0 } }
-
-.hero__mute{
-  position:absolute; right:var(--pad); bottom:30px; z-index:3;
-  width:44px; height:44px; border:1px solid rgba(244,241,236,.3);
-  background:rgba(11,12,14,.5); color:var(--paper); cursor:pointer;
-  backdrop-filter:blur(6px);
-}
 
 /* ============================================================
    STATS
@@ -438,7 +442,6 @@ ul,ol{ margin:0; padding:0; list-style:none; }
 @media (max-width: 480px){
   .stats__grid{ grid-template-columns:1fr; }
   .stat{ border-left:0; padding-left:0; }
-  .hero__mute{ bottom:auto; top:96px; }
 }
 
 /* ============================================================
@@ -451,6 +454,6 @@ ul,ol{ margin:0; padding:0; list-style:none; }
 }
 
 @media print{
-  .nav,.hero__video,.hero__scroll,.hero__mute,.band{ display:none !important; }
+  .nav,.hero__reel,.hero__scroll,.band{ display:none !important; }
   body{ background:#fff; color:#000; }
 }

@@ -41,37 +41,118 @@
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeMenu(); });
 
   /* ---------------------------------------------------------
-     3. Hero video — only fade it in once it is genuinely
-        playing. If the file is missing or the browser blocks
-        autoplay, the procedural desert background stays put.
+     3. Hero reel — the three clips play in order, crossfade
+        into each other, then loop back to the first.
+
+        The hand-off starts slightly BEFORE the outgoing clip
+        ends, so both are still moving during the fade. Waiting
+        for 'ended' would fade out of a frozen last frame.
+
+        Nothing here is load-bearing: if a clip 404s, is
+        blocked by autoplay policy, or the visitor prefers
+        reduced motion, the procedural desert background just
+        stays visible underneath.
   --------------------------------------------------------- */
-  var video = $('#heroVideo');
+  var CROSSFADE = 1.0;   // seconds of overlap; matches the CSS transition
 
-  if (video) {
-    if (reduced) {
-      video.removeAttribute('autoplay');
-      video.pause();
-    } else {
-      var live = function () { video.classList.add('is-live'); };
+  var clips = $$('#heroReel .hero__video');
 
-      video.addEventListener('playing', live, { once: true });
-      video.addEventListener('timeupdate', function tu () {
-        if (video.currentTime > 0.05) { live(); video.removeEventListener('timeupdate', tu); }
-      });
-      video.addEventListener('error', function () { video.classList.remove('is-live'); });
+  if (clips.length && !reduced) {
+    var current  = -1;
+    var handing  = false;
+    var dead     = {};   // clips that failed to load — skipped on later passes
 
-      // Some browsers need a nudge; ignore rejection (fallback already showing).
+    var alive = function () {
+      return clips.some(function (c, i) { return !dead[i]; });
+    };
+
+    var nextIndex = function (from) {
+      for (var step = 1; step <= clips.length; step++) {
+        var i = (from + step) % clips.length;
+        if (!dead[i]) return i;
+      }
+      return -1;
+    };
+
+    var play = function (video) {
       var p = video.play();
       if (p && typeof p.catch === 'function') { p.catch(function () {}); }
+    };
 
-      // Re-try once the tab becomes visible again.
-      document.addEventListener('visibilitychange', function () {
-        if (!document.hidden && video.paused) {
-          var r = video.play();
-          if (r && typeof r.catch === 'function') { r.catch(function () {}); }
-        }
+    var show = function (i) {
+      if (i < 0) return;
+      var incoming = clips[i];
+      var outgoing = current >= 0 ? clips[current] : null;
+
+      current = i;
+      handing = false;
+
+      incoming.currentTime = 0;
+      play(incoming);
+
+      if (!outgoing || outgoing === incoming) {
+        // First clip of the session: fade up out of the desert background.
+        incoming.classList.add('is-live');
+      } else {
+        incoming.classList.remove('is-out');
+        incoming.classList.add('is-under');   // instantly opaque, underneath
+        outgoing.classList.add('is-out');     // lifted on top
+        outgoing.classList.remove('is-live'); // ...and dissolved away
+
+        setTimeout(function () {
+          outgoing.classList.remove('is-out');
+          outgoing.classList.remove('is-under');
+          outgoing.pause();
+          outgoing.currentTime = 0;
+          // Both are opaque, so this swap is invisible.
+          incoming.classList.remove('is-under');
+          incoming.classList.add('is-live');
+        }, CROSSFADE * 1000 + 120);
+      }
+
+      // Pull the following clip down now so the hand-off isn't a stall.
+      var upcoming = clips[nextIndex(i)];
+      if (upcoming && upcoming !== incoming && upcoming.preload !== 'auto') {
+        upcoming.preload = 'auto';
+        upcoming.load();
+      }
+    };
+
+    clips.forEach(function (video, i) {
+      video.addEventListener('error', function () {
+        dead[i] = true;
+        if (i === current) { show(nextIndex(i)); }
       });
-    }
+
+      // Start the hand-off a beat before this clip runs out.
+      video.addEventListener('timeupdate', function () {
+        if (handing || i !== current) return;
+        if (!isFinite(video.duration) || video.duration <= 0) return;
+        if (video.duration - video.currentTime > CROSSFADE) return;
+
+        handing = true;
+        show(nextIndex(i));
+      });
+
+      // Backstop: if timeupdate never fires late enough, 'ended' still advances.
+      video.addEventListener('ended', function () {
+        if (i !== current) return;
+        show(nextIndex(i));
+      });
+    });
+
+    if (alive()) { show(0); }
+
+    // Autoplay is often denied until the visitor interacts; retry then.
+    var kick = function () {
+      if (current >= 0 && clips[current].paused) { play(clips[current]); }
+    };
+    document.addEventListener('visibilitychange', function () {
+      if (!document.hidden) kick();
+    });
+    ['pointerdown', 'keydown', 'touchstart'].forEach(function (evt) {
+      document.addEventListener(evt, kick, { once: true, passive: true });
+    });
   }
 
   /* ---------------------------------------------------------

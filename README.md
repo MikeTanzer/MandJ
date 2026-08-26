@@ -7,36 +7,57 @@ index.html
 assets/
   css/styles.css
   js/main.js
-  video/          <- hero.mp4 / hero.webm go here
-  img/            <- hero-poster.jpg + work-1..4.jpg go here
+  video/          hero-1.mp4, hero-2.mp4, hero-3.mp4
+  img/            <- work-1..4.jpg go here
 ```
 
-## The looping hero video
+## The looping hero background
 
-`index.html` points at `assets/video/hero.mp4` (with an optional `hero.webm` first for smaller files).
-**Until a file is there, the hero renders a procedural animated desert background** — drifting sun glow,
-a parallax ridge line, a sweeping light beam and film grain. It never shows a broken/black box.
+Three clips play in order, dissolve into one another, and loop back to the first —
+indefinitely. They live in `assets/video/`:
 
-Drop a clip in and it fades over the fallback automatically. Guidelines:
+| File | Shot |
+|---|---|
+| `hero-1.mp4` | Aerial push over a jobsite at golden hour |
+| `hero-2.mp4` | Tracking shot along a concrete pour |
+| `hero-3.mp4` | Low angle on steel erection against the sky |
 
-- **8–15 seconds**, seamlessly loopable (same first and last frame).
-- **1920×1080**, H.264 `.mp4`, target **under 6 MB** — this loads on every page view.
-- **No audio track** — it's muted anyway, and stripping it saves bandwidth.
-- Slow camera motion reads best under the headline. Avoid hard cuts.
+**Underneath sits a procedural animated desert background** — drifting sun glow, a
+parallax ridge line, a sweeping light beam and film grain. It shows whenever the clips
+can't: missing files, blocked autoplay, or `prefers-reduced-motion`. The hero never
+renders as a black box.
 
-Encode with ffmpeg:
+### How the sequence works
+
+`main.js` drives it. Two details worth keeping if you touch that code:
+
+- The hand-off starts **one second before** the outgoing clip ends, so both are still
+  moving during the dissolve. Waiting for `ended` would fade out of a frozen last frame.
+- The incoming clip is parked **underneath** at full opacity while the outgoing one
+  fades away **on top** of it. Fading both at once dips through to the dark background
+  mid-transition.
+
+Only the first clip loads eagerly (~2.1 MB); each one pulls the next down as it starts
+playing, so the full 7.1 MB is never part of the initial page load.
+
+A clip that fails to load is marked dead and skipped on subsequent passes — one bad file
+degrades the rotation, it doesn't break it.
+
+### Changing the clips
+
+Add or remove `<video class="hero__video">` elements inside `#heroReel` in `index.html`.
+The count is read from the DOM, so a fourth clip needs no JavaScript change. Keep
+`muted` and `playsinline` — without them mobile browsers refuse to autoplay.
+
+Specs: **1920×1080** (these are 1280×720), H.264 `.mp4`, a few seconds each, **under
+~3 MB**, no audio track. Slow camera motion reads best under the headline.
 
 ```bash
-ffmpeg -i source.mov -t 12 -an -vf "scale=1920:-2,fps=30" -c:v libx264 -crf 26 -preset slow -movflags +faststart assets/video/hero.mp4
+ffmpeg -i source.mov -t 6 -an -vf "scale=1920:-2,fps=30" -c:v libx264 -crf 26 -preset slow -movflags +faststart assets/video/hero-1.mp4
 ```
 
-Optional smaller WebM:
-
-```bash
-ffmpeg -i assets/video/hero.mp4 -an -c:v libvpx-vp9 -crf 34 -b:v 0 assets/video/hero.webm
-```
-
-Add `assets/img/hero-poster.jpg` (a frame from the clip) so slow connections see something instant.
+Because the clips dissolve into each other rather than hard-cutting, they don't need to
+be individually loop-safe.
 
 ## Project photos
 

@@ -83,13 +83,13 @@
     <div class="hero__grain"></div>
   </div>
 
-  <!-- Looping video background. Drop your clip at assets/video/hero.mp4 -->
-  <video class="hero__video" id="heroVideo"
-         autoplay muted loop playsinline preload="auto"
-         poster="assets/img/hero-poster.jpg">
-    <source src="assets/video/hero.webm" type="video/webm" />
-    <source src="assets/video/hero.mp4" type="video/mp4" />
-  </video>
+  <!-- Background playlist: the three clips play in order, crossfade into one
+       another, then loop back to the first. main.js drives the sequence. -->
+  <div class="hero__reel" id="heroReel" aria-hidden="true">
+    <video class="hero__video" muted playsinline preload="auto"  src="assets/video/hero-1.mp4"></video>
+    <video class="hero__video" muted playsinline preload="none"  src="assets/video/hero-2.mp4"></video>
+    <video class="hero__video" muted playsinline preload="none"  src="assets/video/hero-3.mp4"></video>
+  </div>
 
   <div class="hero__scrim" aria-hidden="true"></div>
 
@@ -110,7 +110,6 @@
     </div>
   </div>
 
-  <button class="hero__mute" id="muteBtn" hidden aria-label="Toggle background video sound"></button>
 
   <a class="hero__scroll" href="#stats" aria-label="Scroll down">
     <span></span>
