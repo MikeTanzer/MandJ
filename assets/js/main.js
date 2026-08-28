@@ -317,7 +317,7 @@
         visitor's mail app. Nothing is transmitted anywhere
         else. See README for wiring up a real backend.
   --------------------------------------------------------- */
-  var INBOX = 'build@mnjconstruction.com';
+  var INBOX = 'matt@mandjconst.com';
 
   var form    = $('#bidForm');
   var sentMsg = $('#sentMsg');
@@ -369,11 +369,11 @@
       '---------------',
       $('#message').value.trim(),
       '',
-      '— Sent from mnjconstruction.com'
+      '— Sent from mandjconst.com'
     ].join('\n');
 
     var href = 'mailto:' + INBOX +
-      '?subject=' + encodeURIComponent('Bid request — ' + $('#type').value + ' — ' + $('#name').value.trim()) +
+      '?subject=' + encodeURIComponent('Quote request — ' + $('#type').value + ' — ' + $('#name').value.trim()) +
       '&body='    + encodeURIComponent(body);
 
     window.location.href = href;

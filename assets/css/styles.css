@@ -367,6 +367,22 @@ ul,ol{ margin:0; padding:0; list-style:none; }
 .proj__meta h3{ font-family:var(--cond); font-size:26px; font-weight:700; text-transform:uppercase; letter-spacing:.02em; margin:8px 0 6px; }
 .proj__meta p{ color:var(--concrete); font-size:14.5px; }
 
+/* ---------- equipment note + coverage lists ---------- */
+.note{
+  margin-top:38px; padding-top:26px; border-top:1px solid var(--line);
+  color:var(--concrete); max-width:66ch; font-size:15.5px;
+}
+.section--film .note{ border-top-color:rgba(244,241,236,.22); text-shadow:0 2px 14px rgba(0,0,0,.9); }
+
+/* Coverage tiles carry a city list rather than a single project line, so they
+   need looser leading and a taller floor than a photo tile would. */
+.proj__cities{ color:var(--concrete); font-size:14.5px; line-height:1.85; max-width:62ch; }
+.proj__meta{ padding:26px; }
+.work__grid .proj{ min-height:270px; }
+
+.owner{ color:var(--paper); font-family:var(--cond); font-size:19px; letter-spacing:.03em; }
+.footer__roc{ color:var(--concrete); font-size:14px; padding:4px 0; font-variant-numeric:tabular-nums; }
+
 /* ---------- CTA band ---------- */
 .band{ background:linear-gradient(100deg,var(--amber-hot),var(--amber)); color:#0b0c0e; }
 .band__inner{ display:flex; align-items:center; justify-content:space-between; gap:28px; flex-wrap:wrap; padding-block:clamp(44px,6vw,66px); }

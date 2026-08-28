@@ -1,4 +1,4 @@
-# MNJ Construction — Phoenix, AZ
+# M & J Construction Inc. — Phoenix, AZ
 
 Static marketing site. No build step, no dependencies. Open `index.html` or serve the folder.
 
@@ -118,10 +118,10 @@ The app icons are full-bleed — no corner cuts, since iOS applies its own mask 
 glyph is nudged up two units, because the mountain is bottom-heavy and reads low when it
 fills a large tile. The tab icon stays true to the header lockup.
 
-## Project photos
+## Region photos
 
-The four tiles in **Work** look for `assets/img/work-1.jpg` … `work-4.jpg`. If a file is missing, a
-styled gradient tile shows instead — so the section never looks broken. Swap the filenames in the
+The four region tiles in **Coverage** look for `assets/img/work-1.jpg` … `work-4.jpg`. If a
+file is missing, a styled gradient tile shows instead — so the section never looks broken. Swap the filenames in the
 `--img` rules at the bottom of the **work grid** block in `assets/css/styles.css` if you prefer different names.
 
 ## The contact form
@@ -144,17 +144,27 @@ check above it, which already `return`s early on problems).
 
 The hidden `company_website` input is a honeypot — leave it in place, it catches most bots.
 
-## Placeholder content to replace
+## Where the content came from
 
-Everything below is invented and needs the real values before this goes live:
+All company details are the real ones, taken from the live site at
+<https://mandjconst.com> (a GoDaddy one-pager) on 2026-08-27:
 
-| Where | Placeholder |
+| | |
 |---|---|
-| Address | 2135 W Buckeye Road, Suite 140, Phoenix, AZ 85009 |
-| Phone | (602) 555-0184 |
-| Email | build@mnjconstruction.com |
-| License | ROC #123456 (nav eyebrow, footer, JSON-LD) |
-| Stats | 22 years / 640+ projects / 4.1M sq ft / zero incidents |
-| Work tiles | All four project names and figures |
+| Legal name | M & J Construction Inc. |
+| Trade | Demolition & excavating contractor, commercial & residential |
+| Founded | 1986, by Matt Meade — started with one backhoe and a 10-wheel dump truck |
+| Owner / operator | Matt Meade |
+| Address | 3520 East Illini Street, Phoenix, AZ 85040 |
+| Phone | (602) 470-8111 |
+| Email | matt@mandjconst.com |
+| Hours | Monday–Friday, 6:00 am – 3:00 pm |
+| Licenses | Commercial ROC095859 A-05 · Wrecking ROC152394 L-57 · Residential ROC191499 C-02 and ROC191500 C-22R |
+| Slogans | "Professional, Experienced and Trusted" · "We Have The Right Stuff" · "We Get The Job Done Right" |
 
-They appear in `index.html`, plus `INBOX` in `assets/js/main.js`.
+The services, machinery inventory and the 32 Arizona communities in **Coverage** are all
+from that site. Section copy is written fresh rather than lifted, but every fact,
+figure, service and place name traces back to it.
+
+**Still to confirm before launch:** the live site's copyright notice reads 2019, so the
+hours, fleet list and license numbers are worth a check with Matt before this goes out.
