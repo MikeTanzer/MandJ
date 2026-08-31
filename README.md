@@ -120,7 +120,12 @@ fills a large tile. The tab icon stays true to the header lockup.
 
 ## Region photos
 
-The four region tiles in **Coverage** look for `assets/img/work-1.jpg` … `work-4.jpg`. If a
+There are **no project photos to pull from mandjconst.com** — its "Photo Gallery" heading
+renders zero images, and the only two image assets on the whole site are a diamond-plate
+texture and a stylised grader/truck graphic. The Coverage tiles are therefore text-only
+and size to their content.
+
+If Matt supplies jobsite photography later, the four region tiles in **Coverage** look for `assets/img/work-1.jpg` … `work-4.jpg`. If a
 file is missing, a styled gradient tile shows instead — so the section never looks broken. Swap the filenames in the
 `--img` rules at the bottom of the **work grid** block in `assets/css/styles.css` if you prefer different names.
 

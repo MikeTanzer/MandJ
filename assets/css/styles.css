@@ -378,7 +378,11 @@ ul,ol{ margin:0; padding:0; list-style:none; }
    need looser leading and a taller floor than a photo tile would. */
 .proj__cities{ color:var(--concrete); font-size:14.5px; line-height:1.85; max-width:62ch; }
 .proj__meta{ padding:26px; }
-.work__grid .proj{ min-height:270px; }
+/* Coverage tiles carry text, not photography — mandjconst.com has no project
+   photos to pull. Reserving photo-sized height just left dead space under the
+   city lists, so these size to their content. Adding a work-*.jpg later still
+   works: it fills the tile as a cover background behind the text. */
+.work__grid .proj{ min-height:0; }
 
 .owner{ color:var(--paper); font-family:var(--cond); font-size:19px; letter-spacing:.03em; }
 .footer__roc{ color:var(--concrete); font-size:14px; padding:4px 0; font-variant-numeric:tabular-nums; }
